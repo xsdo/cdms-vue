@@ -62,6 +62,7 @@
         </template>
       </el-table-column>
       <el-table-column label="临床意义"  prop="patientItem.significance" ></el-table-column>
+      <el-table-column label="核心项目"  prop="patientItem.isCore" :formatter="isCoreFormat"  />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -151,6 +152,35 @@
         <el-form-item label="临床意义" prop="significance">
           <el-input v-model="form.significance"  type="textarea" :rows="3" placeholder="请输入临床意义" />
         </el-form-item>
+
+      <!--<el-form-item label="核心项目" prop="isCore">
+        <el-input v-model="form.isCore"  type="textarea" :rows="1" placeholder="请输入是否核心项目（1 核心项目 2非核心项目 0待定）" />
+      </el-form-item>-->
+
+       <!-- <el-col :span="12">
+          <el-form-item label="核心项目" prop="isCore" >
+            <el-select v-model="form.isCore" placeholder="请选择是否核心项目" >
+              <el-option
+                v-for="dict in isCoreOptions"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        -->
+        <el-col :span="24">
+          <el-form-item label="核心项目" prop="isCore" >
+            <el-radio-group v-model="form.isCore">
+              <el-radio :label="1">核心项目</el-radio>
+              <el-radio :label="2">非核心项目</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+
+
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -193,12 +223,14 @@ import { getToken } from '@/utils/auth'
       patientOptions:[],
       categoryOptions: [],
       itemOptions:[],
+      isCoreOptions:[],
       open: false,
       queryParams: {
         // pageNum: 1,
         // pageSize: 10,
         patientId: undefined,
         category: undefined,
+        isCore: undefined,
       },
       patientName:"",
       itemName:"",
@@ -217,6 +249,9 @@ import { getToken } from '@/utils/auth'
     this.getPatientList();
     this.getDicts("case_item_type").then(response => {
       this.categoryOptions = response.data;
+    });
+    this.getDicts("sys_is_core").then(response => {
+      this.isCoreOptions = response.data;
     });
   },
   methods: {
@@ -252,6 +287,13 @@ import { getToken } from '@/utils/auth'
         // this.itemOptions.push(t);
         this.itemOptions = response.data;
       });
+    },
+    isCoreFormat(row, column) {
+      // console.log(row.patientItem.isCore);
+      if (row.patientItem.isCore!=null){
+        return this.selectDictLabel(this.isCoreOptions, row.patientItem.isCore);
+
+      }
     },
     //删除文件
     beforeRemove(file) {
@@ -325,7 +367,8 @@ import { getToken } from '@/utils/auth'
         itemId: undefined,
         records: undefined,
         recordsImg:"",
-        significance: undefined
+        significance: undefined,
+        isCore: undefined
       };
       this.resetForm("form");
     },

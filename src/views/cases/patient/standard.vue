@@ -102,6 +102,7 @@
       <el-table-column label="回答" align="center" prop="answer" />
       <el-table-column label="所属类型" align="center" prop="type.typeName" />
       <el-table-column label="检查结果" align="center" prop="result" />
+      <el-table-column label="核心项目" align="center" prop="isCore" :formatter="isCoreFormat" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -156,6 +157,34 @@
         <el-form-item label="检查结果" prop="result">
           <el-input v-model="form.result" placeholder="请输入检查结果" />
         </el-form-item>
+
+        <!--<el-form-item label="核心项目" prop="isCore">
+         <el-input v-model="form.isCore" placeholder="请输入是否核心项目（1 核心项目 2非核心项目 0待定）" />
+       </el-form-item>-->
+
+        <!--<el-col :span="12">
+          <el-form-item label="核心项目" prop="isCore">
+            <el-select v-model="form.isCore" placeholder="请选择是否核心项目" >
+              <el-option
+                v-for="dict in isCoreOptions"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>-->
+
+        <el-col :span="24">
+          <el-form-item label="核心项目" prop="isCore" >
+            <el-radio-group v-model="form.isCore">
+              <el-radio :label="1">核心项目</el-radio>
+              <el-radio :label="2">非核心项目</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -186,6 +215,7 @@ export default {
       patientName:undefined,
       questionList: [],
       patientOptions:[],
+      isCoreOptions:[],
       typeOptions: undefined,
       title: "",
       open: false,
@@ -196,6 +226,7 @@ export default {
         answer: undefined,
         typeId: undefined,
         result: undefined,
+        isCore: undefined,
         patientId: undefined,
       },
       form: {},
@@ -212,6 +243,9 @@ export default {
         result: [
           { required: true, message: "结果不能为空", trigger: "blur" }
         ],
+        isCore: [
+          { required: true, message: "核心项目不能为空", trigger: "blur" }
+        ],
       }
     };
   },
@@ -221,6 +255,9 @@ export default {
     // console.log(patientId);
     this.getPatient(patientId);
     this.getPatientList();
+    this.getDicts("sys_is_core").then(response => {
+      this.isCoreOptions = response.data;
+    });
   },
   methods: {
     //查询案例患者
@@ -253,6 +290,9 @@ export default {
         this.typeOptions = response.data;
       });
     },
+    isCoreFormat(row, column) {
+      return this.selectDictLabel(this.isCoreOptions, row.isCore);
+    },
     cancel() {
       this.open = false;
       this.reset();
@@ -264,7 +304,8 @@ export default {
         question: undefined,
         answer: undefined,
         typeId: undefined,
-        result: undefined
+        result: undefined,
+        isCore: undefined
       };
       this.resetForm("form");
     },
