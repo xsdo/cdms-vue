@@ -38,8 +38,8 @@
       <el-table-column label="学习项目ID" align="center" prop="learningId" />
       <el-table-column label="学习项目名称" align="center" prop="learningName" />
       <el-table-column label="所属学习项目ID" align="center" prop="pid" />-->
-      <el-table-column label="详细信息" align="center" prop="result" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="详细信息" align="justify" width="1300" prop="result" />
+      <el-table-column label="操作" align="center"  class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"

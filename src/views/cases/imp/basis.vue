@@ -74,7 +74,11 @@
       <el-table-column label="依据ID" align="center" prop="id" />
       <!--<el-table-column label="诊断ID" align="center" prop="impId" />-->
       <el-table-column label="诊断依据" align="center" prop="basis" />
-      <el-table-column label="是否标题" align="center" prop="flag" />
+      <el-table-column label="是否标题" align="center" prop="flag">
+      <template slot-scope="scope" >
+        <div>{{scope.row.flag === '0' ? '是' : '否'}}</div>
+      </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -118,14 +122,22 @@
               <el-input type="textarea" v-model="form.basis" placeholder="请输入诊断依据" />
             </el-form-item>
           </el-col>
-          <el-col :span="2">
+          <!--<el-col :span="2">
             <el-form-item label="是否标题" prop="flag">
-              <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+              <el-tooltip class="item" effect="dark" content="选择是否标题" placement="top-start">
                 <el-checkbox-button >√</el-checkbox-button>
               </el-tooltip>
             </el-form-item>
-          </el-col>
+          </el-col>-->
           <el-col :span="12">
+          <el-form-item label="是否标题" prop="flag">
+            <el-radio-group v-model="form.flag">
+              <el-radio label="0">是</el-radio>
+              <el-radio label="1">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          </el-col>
+          <!--<el-col :span="12">
             <el-button
               type="primary" plain
               icon="el-icon-plus"
@@ -140,7 +152,7 @@
               size="mini"
               @click="deleteOptions"
             >删减依据选项</el-button>
-          </el-col>
+          </el-col>-->
         </el-row>
 
       </el-form>
@@ -227,7 +239,7 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        impId: undefined,
+        impId: this.queryParams.impId,
         basis: undefined,
         flag: undefined,
         createBy: undefined,
